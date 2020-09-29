@@ -27,11 +27,17 @@ This workshop contains everything needed to train and deploy your own machine le
 
 * Navigate to the SageMaker console (either by finding it in the list, or typing in sagemaker into the search bar)
 
-* Find the link for “notebook instances” in the left-hand column
+* Find the link for “Amazon SageMaker Studio” in the left-hand column
 
-* Select “create new notebook instance”
+* Select “Quick Start”
 
-* Name your instance sagemaker-basketball-YOURNAME
+* Choose "Create a new role"
+
+**Now we will need to detail the IAM permissions that our SageMaker instance will have. We will need to give it access to our S3 bucket that we created earlier.**
+
+* Choose "Specific S3 bucket" and type the bucket name you created earlier. Then select "Create role"
+
+* Then select "submit". You'll need to wait a couple of minutes for your SageMaker Studio Control Panel to be created
 
 
 **Here you have the option to select the configuration of your Jupyter notebook. This includes settings like instance size and storage amount. Note that this is the size of only the notebook itself, and the training and deployment of the model will occur on entirely different instances. In this case a t2 medium is more than enough for what we need.**
@@ -59,27 +65,45 @@ This workshop contains everything needed to train and deploy your own machine le
 * Once your sagemaker notebook has appeared and is available, select “Open Jupyter”
 
 
-**This is your very own Jupyter notebook. The first thing we need to do is download the python code from the git repository. We can do this through the git command line interface.**
+**This is your very own Sagemaker Studio. The first thing we need to do is download the python code from the git repository. We can do this through the git command line interface.**
 
 
-In the top right corner, choose the “new” option and select terminal
+In the top left corner, choose the “new” option and select terminal
 
 
 **First cd into the main directory**
 
-* Type `cd SageMaker` and hit enter
+**Clone the public repository into the current locations**
+
+* Type `git clone https://github.com/stmayne/sagemaker-studio-nba.git`
+
+**We also need to upload our data to our s3 bucket**
+
+* Type `aws s3 cp nba_data.csv s3://YOURBUCKETNAME`
 
 
-**Then clone the public repository into the current locations**
+## Now we want to create our Sagemaker AutoPilot Experiment.
 
-* Type `git clone https://github.com/stmayne/sagemaker-basketball.git`
+* Click "new" in the top left, then select "Experiment"
 
+* Name your experiement what you want
 
-## Now we want to open our python code and follow the instructions in the Jupyter notebook
+* Use "Find S3 bucket", and enter the name of your S3 bucket name
 
-* Click the jupyter icon in the top left
+* For S3 object key prefix type "nba_data.csv"
 
-* Click on the “sagemaker-basketball” folder
+**Our target attribute is the value we will be trying to predict. In this case the field is named "point_diff"**
 
-* Click nba-game-prediction.ipynb
+* Type "point_diff" for Target attribute name
 
+* For output S3 bucket type the name of your S3 bucket
+
+* For the S3 object key prefix type "output/"
+
+**Now we need to choose the type of machine learning probem we have. Since were trying to predict a value in a range, we choose "Regression"**
+
+* Select "Regression"
+
+* Select "Yes" for "Do you want to run a complete experiment?"
+
+* Select "Create Experiment"
